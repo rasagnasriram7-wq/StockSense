@@ -1,4 +1,5 @@
 import prisma from './prisma';
+import { broadcastPipelineEvent } from './pipeline-events';
 
 export async function ensureVirtualLocations(tx: any) {
   let locVend = await tx.location.findFirst({ where: { code: 'LOC-VEND' } });
@@ -41,7 +42,7 @@ export async function ensureVirtualLocations(tx: any) {
 }
 
 export async function validateDocument(documentId: string, userId: string) {
-  return await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
     // 1. Fetch document with all line items and product info
     const doc = await tx.document.findUnique({
       where: { id: documentId },
@@ -381,4 +382,35 @@ export async function validateDocument(documentId: string, userId: string) {
 
     return { document: updatedDoc, moves: createdMoves };
   });
+
+  // Broadcast to Live Pipeline Stream
+  try {
+    for (const item of result.document.items) {
+      let stage: 'inbound' | 'staging' | 'internal' | 'picking' | 'outbound' | 'variance' = 'internal';
+      if (result.document.type === 'receipt') stage = 'inbound';
+      else if (result.document.type === 'delivery') stage = 'outbound';
+      else if (result.document.type === 'internal') stage = 'internal';
+      else if (result.document.type === 'adjustment') stage = 'variance';
+
+      broadcastPipelineEvent({
+        type: result.document.type as any,
+        stage,
+        title: `${result.document.type.toUpperCase()}: ${result.document.documentNumber}`,
+        message: `${item.quantity} ${item.product.uom} of ${item.product.name} moved to ${item.toLocation?.name || 'Customer/Adjustment'}`,
+        documentNumber: result.document.documentNumber,
+        productName: item.product.name,
+        sku: item.product.sku,
+        quantity: item.quantity,
+        uom: item.product.uom,
+        fromLocation: item.fromLocation?.name || 'Vendors',
+        toLocation: item.toLocation?.name || 'Customer',
+        user: 'Inventory Operations',
+        status: 'done',
+      });
+    }
+  } catch (err) {
+    console.error('Failed to broadcast pipeline event:', err);
+  }
+
+  return result;
 }

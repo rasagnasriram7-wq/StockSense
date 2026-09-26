@@ -20,6 +20,7 @@ import {
   ChevronDown,
   Layers,
   Sparkles,
+  Activity,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -88,6 +89,26 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: SidebarProps) {
           >
             <LayoutDashboard className="w-4 h-4 shrink-0" />
             <span>Dashboard</span>
+          </Link>
+
+          {/* Live Pipeline Stream */}
+          <Link
+            href="/pipeline"
+            onClick={closeMobile}
+            className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              isCurrent('/pipeline')
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-md shadow-emerald-600/30 font-semibold'
+                : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <Activity className="w-4 h-4 shrink-0 text-emerald-400 animate-pulse" />
+              <span>Pipeline Stream</span>
+            </div>
+            <span className="flex items-center gap-1 text-[10px] font-bold tracking-wider uppercase px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+              LIVE
+            </span>
           </Link>
 
           {/* Products */}

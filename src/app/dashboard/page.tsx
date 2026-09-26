@@ -19,6 +19,8 @@ import {
   Clock,
   Warehouse as WarehouseIcon,
   Layers,
+  Activity,
+  Radio,
 } from 'lucide-react';
 import {
   BarChart,
@@ -156,6 +158,43 @@ export default function DashboardPage() {
             </Link>
           </div>
         </div>
+
+        {/* Live Operations Pipeline Stream Banner */}
+        <Link
+          href="/pipeline"
+          className="block p-4 rounded-2xl bg-gradient-to-r from-emerald-950/60 via-slate-900 to-slate-900 border border-emerald-800/40 hover:border-emerald-500/60 shadow-xl transition-all group"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 transition-transform">
+                <Activity className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+                    Live Operations Pipeline Stream
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase tracking-wider">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                    SSE ACTIVE
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Stream goods movement, automated conveyances, and intake telemetry in real-time $\rightarrow$
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 text-xs shrink-0 font-mono">
+              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-emerald-400 font-semibold">
+                Live Telemetry Active
+              </span>
+              <span className="text-blue-400 font-semibold group-hover:translate-x-0.5 transition-transform">
+                Open Command Center →
+              </span>
+            </div>
+          </div>
+        </Link>
 
         {/* Dynamic Filters Bar */}
         <div className="bg-slate-900/80 border border-slate-800/80 rounded-2xl p-4 backdrop-blur-sm shadow-xl">
